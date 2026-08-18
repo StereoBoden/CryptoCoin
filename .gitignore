@@ -31,3 +31,18 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+.DS_Store
+.kotlin/
+
+## Xcode
+# Xcode User Data and workspaces
+xcuserdata/
+*.xcworkspace/contents.xcworkspacedata
+*.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings
+!*.xcworkspace/contents.xcworkspacedata
+
+# Xcode user-specific settings
+*.xcuserstate
+*.xcscheme
+xcschemesmanagement.plist
