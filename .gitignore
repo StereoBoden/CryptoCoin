@@ -41,3 +41,8 @@ xcuserdata/
 *.xcworkspace/contents.xcworkspacedata
 *.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings
 !*.xcworkspace/contents.xcworkspacedata
+
+# Xcode user-specific settings
+*.xcuserstate
+*.xcscheme
+xcschemesmanagement.plist
