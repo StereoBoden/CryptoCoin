@@ -6,17 +6,30 @@ import com.jbappz.cryptocoin.data.dto.CoinPriceDto
 import com.jbappz.cryptocoin.data.dto.CoinPriceHistoryResponseDto
 import com.jbappz.cryptocoin.data.dto.CoinsResponseDto
 import com.jbappz.cryptocoin.domain.model.Coin
+import com.jbappz.cryptocoin.domain.model.CoinModel
 import com.jbappz.cryptocoin.domain.model.CoinPrice
+
+fun CoinItemDto.toCoinModel(): CoinModel {
+    return CoinModel(
+        coin = Coin(
+            id = uuid,
+            name = name,
+            symbol = symbol,
+            iconUrl = iconUrl,
+        ),
+        price = CoinPrice(
+            price = price,
+            change = change,
+        )
+    )
+}
 
 fun CoinItemDto.toCoin(): Coin {
     return Coin(
-        uuid = uuid,
-        symbol = symbol,
+        id = uuid,
         name = name,
+        symbol = symbol,
         iconUrl = iconUrl,
-        price = price,
-        rank = rank,
-        change = change,
     )
 }
 
@@ -31,7 +44,7 @@ fun CoinDetailsResponseDto.toCoin(): Coin {
 fun CoinPriceDto.toCoinPrice(): CoinPrice {
     return CoinPrice(
         price = price ?: 0.0,
-        timestamp = timestamp,
+        change = change ?: 0.0,
     )
 }
 
