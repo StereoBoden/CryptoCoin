@@ -1,6 +1,6 @@
 package com.jbappz.cryptocoin.coins.domain
-sealed interface DataError : com.jbappz.cryptocoin.coins.domain.Error {
-    enum class Remote : com.jbappz.cryptocoin.coins.domain.DataError {
+sealed interface DataError : Error {
+    enum class Remote : DataError {
         REQUEST_TIMEOUT,
         TOO_MANY_REQUESTS,
         NO_INTERNET,
@@ -9,7 +9,7 @@ sealed interface DataError : com.jbappz.cryptocoin.coins.domain.Error {
         UNKNOWN
     }
 
-    enum class Local : com.jbappz.cryptocoin.coins.domain.DataError {
+    enum class Local : DataError {
         DISK_FULL,
         INSUFFICIENT_FUNDS,
         UNKNOWN

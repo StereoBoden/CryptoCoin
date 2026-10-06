@@ -6,5 +6,5 @@ import org.jetbrains.compose.resources.StringResource
 @Stable
 data class CoinsState(
     val error: StringResource? = null,
-    val coins: List<com.jbappz.cryptocoin.coins.ui.UiCoinListItem> = emptyList(),
+    val coins: List<UiCoinListItem> = emptyList(),
 )

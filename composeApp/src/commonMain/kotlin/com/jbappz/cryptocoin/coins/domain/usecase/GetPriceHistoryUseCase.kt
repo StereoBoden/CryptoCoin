@@ -8,8 +8,8 @@ import com.jbappz.cryptocoin.coins.domain.map
 import com.jbappz.cryptocoin.coins.domain.model.CoinPrice
 
 suspend fun getPriceHistoryUseCase(
-    coinsRemoteDataSource: com.jbappz.cryptocoin.coins.domain.CoinsRemoteDataSource,
+    coinsRemoteDataSource: CoinsRemoteDataSource,
     coinId: String,
-): com.jbappz.cryptocoin.coins.domain.Result<List<com.jbappz.cryptocoin.coins.domain.model.CoinPrice>, com.jbappz.cryptocoin.coins.domain.DataError.Remote> {
+): Result<List<CoinPrice>, DataError.Remote> {
     return coinsRemoteDataSource.getPriceHistory(coinId).map { it.toCoinPrices() }
 }

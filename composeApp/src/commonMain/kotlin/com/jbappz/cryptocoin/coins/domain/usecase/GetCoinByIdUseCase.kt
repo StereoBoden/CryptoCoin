@@ -8,8 +8,8 @@ import com.jbappz.cryptocoin.coins.domain.map
 import com.jbappz.cryptocoin.coins.domain.model.Coin
 
 suspend fun getCoinByIdUseCase(
-    coinsRemoteDataSource: com.jbappz.cryptocoin.coins.domain.CoinsRemoteDataSource,
+    coinsRemoteDataSource: CoinsRemoteDataSource,
     coinId: String,
-): com.jbappz.cryptocoin.coins.domain.Result<com.jbappz.cryptocoin.coins.domain.model.Coin, com.jbappz.cryptocoin.coins.domain.DataError.Remote> {
+): Result<Coin, DataError.Remote> {
     return coinsRemoteDataSource.getCoinById(coinId).map { it.toCoin() }
 }

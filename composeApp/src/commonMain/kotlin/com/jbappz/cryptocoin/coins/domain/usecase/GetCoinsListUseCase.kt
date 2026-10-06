@@ -10,9 +10,9 @@ import com.jbappz.cryptocoin.coins.domain.model.Coin
 import com.jbappz.cryptocoin.coins.domain.model.CoinModel
 
 class GetCoinsListUseCase(
-    private val client: com.jbappz.cryptocoin.coins.domain.CoinsRemoteDataSource
+    private val client: CoinsRemoteDataSource
 ) {
-    suspend fun execute(): com.jbappz.cryptocoin.coins.domain.Result<List<com.jbappz.cryptocoin.coins.domain.model.CoinModel>, com.jbappz.cryptocoin.coins.domain.DataError.Remote> {
+    suspend fun execute(): Result<List<CoinModel>, DataError.Remote> {
         return client.getListOfCoins().map { dto ->
             dto.data.coins.map {
                 it.toCoinModel()
