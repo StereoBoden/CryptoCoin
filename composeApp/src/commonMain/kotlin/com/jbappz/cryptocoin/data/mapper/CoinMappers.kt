@@ -17,7 +17,7 @@ fun CoinItemDto.toCoinModel(): CoinModel {
             symbol = symbol,
             iconUrl = iconUrl,
         ),
-        price = CoinPrice(
+        coinPrice = CoinPrice(
             price = price,
             change = change,
         )
