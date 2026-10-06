@@ -1,7 +1,7 @@
-package com.jbappz.cryptocoin.data
+package com.jbappz.cryptocoin.coins.data
 
-import com.jbappz.cryptocoin.domain.DataError
-import com.jbappz.cryptocoin.domain.Result
+import com.jbappz.cryptocoin.coins.domain.DataError
+import com.jbappz.cryptocoin.coins.domain.Result
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.network.sockets.SocketTimeoutException

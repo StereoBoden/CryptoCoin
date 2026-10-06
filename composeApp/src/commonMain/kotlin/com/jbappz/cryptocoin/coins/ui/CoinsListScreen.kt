@@ -1,4 +1,4 @@
-package com.jbappz.cryptocoin.ui
+package com.jbappz.cryptocoin.coins.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -192,7 +192,11 @@ fun CoinsListContentPreview() {
     MaterialTheme {
         CoinsListContent(
             state = CoinsState(
-                coins = listOf(previewCoin1, previewCoin2, previewCoin3)
+                coins = listOf(
+                    previewCoin1,
+                    previewCoin2,
+                    previewCoin3
+                )
             ),
             onCoinClicked = {}
         )

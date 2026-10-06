@@ -1,13 +1,13 @@
-package com.jbappz.cryptocoin.data.mapper
+package com.jbappz.cryptocoin.coins.data.mapper
 
-import com.jbappz.cryptocoin.data.dto.CoinDetailsResponseDto
-import com.jbappz.cryptocoin.data.dto.CoinItemDto
-import com.jbappz.cryptocoin.data.dto.CoinPriceDto
-import com.jbappz.cryptocoin.data.dto.CoinPriceHistoryResponseDto
-import com.jbappz.cryptocoin.data.dto.CoinsResponseDto
-import com.jbappz.cryptocoin.domain.model.Coin
-import com.jbappz.cryptocoin.domain.model.CoinModel
-import com.jbappz.cryptocoin.domain.model.CoinPrice
+import com.jbappz.cryptocoin.coins.data.dto.CoinDetailsResponseDto
+import com.jbappz.cryptocoin.coins.data.dto.CoinItemDto
+import com.jbappz.cryptocoin.coins.data.dto.CoinPriceDto
+import com.jbappz.cryptocoin.coins.data.dto.CoinPriceHistoryResponseDto
+import com.jbappz.cryptocoin.coins.data.dto.CoinsResponseDto
+import com.jbappz.cryptocoin.coins.domain.model.Coin
+import com.jbappz.cryptocoin.coins.domain.model.CoinModel
+import com.jbappz.cryptocoin.coins.domain.model.CoinPrice
 
 fun CoinItemDto.toCoinModel(): CoinModel {
     return CoinModel(
