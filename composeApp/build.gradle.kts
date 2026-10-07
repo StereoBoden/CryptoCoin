@@ -1,3 +1,4 @@
+import java.util.Properties
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -7,6 +8,8 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.buildkonfig)
 }
 
 kotlin {
@@ -88,5 +91,23 @@ android {
 
 dependencies {
     debugImplementation(libs.compose.uiTooling)
+}
+
+buildkonfig {
+    packageName = "com.jbappz.cryptocoin"
+
+    defaultConfigs {
+        val localProperties = Properties().apply {
+            val file = rootProject.file("local.properties")
+            if (file.exists()) {
+                file.inputStream().use { load(it) }
+            }
+        }
+        val apiKey = localProperties.getProperty("COIN_RANKING_API_KEY")
+            ?: System.getenv("COIN_RANKING_API_KEY")
+            ?: ""
+
+        buildConfigField(com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING, "COIN_RANKING_API_KEY", apiKey)
+    }
 }
 
