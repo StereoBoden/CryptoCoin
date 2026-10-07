@@ -29,8 +29,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import org.koin.compose.viewmodel.koinViewModel
 
 data class CoinRoutineColorsPalette(
     val profitGreen: Color = Color(0xFF2E7D32),
@@ -45,7 +45,7 @@ val LocalCoinRoutineColorsPalette = staticCompositionLocalOf {
 fun CoinsListScreen(
     onCoinClicked: (String) -> Unit,
 ) {
-    val coinsListViewModel = viewModel(CoinListViewModel::class) // Todo: we need to change this after we implement DI
+    val coinsListViewModel = koinViewModel<CoinListViewModel>()
     val state by coinsListViewModel.state.collectAsStateWithLifecycle()
 
     CoinsListContent(
