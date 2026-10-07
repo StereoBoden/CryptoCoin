@@ -20,26 +20,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import com.jbappz.cryptocoin.theme.CryptoCoinTheme
+import com.jbappz.cryptocoin.theme.extendedColors
 import org.koin.compose.viewmodel.koinViewModel
-
-data class CoinRoutineColorsPalette(
-    val profitGreen: Color = Color(0xFF2E7D32),
-    val lossRed: Color = Color(0xFFD32F2F),
-)
-
-val LocalCoinRoutineColorsPalette = staticCompositionLocalOf {
-    CoinRoutineColorsPalette()
-}
 
 @Composable
 fun CoinsListScreen(
@@ -149,7 +140,7 @@ fun CoinListItem(
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = coin.formattedChange,
-                color = if (coin.isPositive) LocalCoinRoutineColorsPalette.current.profitGreen else LocalCoinRoutineColorsPalette.current.lossRed,
+                color = if (coin.isPositive) MaterialTheme.extendedColors.profitGreen else MaterialTheme.extendedColors.lossRed,
                 fontSize = MaterialTheme.typography.titleSmall.fontSize,
             )
         }
@@ -189,7 +180,7 @@ private val previewCoin3 = UiCoinListItem(
 @Preview
 @Composable
 fun CoinsListContentPreview() {
-    MaterialTheme {
+    CryptoCoinTheme {
         CoinsListContent(
             state = CoinsState(
                 coins = listOf(
@@ -206,7 +197,7 @@ fun CoinsListContentPreview() {
 @Preview
 @Composable
 fun CoinsListContentEmptyPreview() {
-    MaterialTheme {
+    CryptoCoinTheme {
         CoinsListContent(
             state = CoinsState(coins = emptyList()),
             onCoinClicked = {}
