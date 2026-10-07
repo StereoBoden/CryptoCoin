@@ -4,6 +4,7 @@ package com.jbappz.cryptocoin.di
 import com.jbappz.cryptocoin.coins.data.KtorCoinsRemoteDataSource
 import com.jbappz.cryptocoin.coins.data.network.HttpClientFactory
 import com.jbappz.cryptocoin.coins.domain.CoinsRemoteDataSource
+import com.jbappz.cryptocoin.coins.domain.usecase.GetCoinDetailsUseCase
 import com.jbappz.cryptocoin.coins.domain.usecase.GetCoinsListUseCase
 import com.jbappz.cryptocoin.coins.ui.CoinListViewModel
 import io.ktor.client.HttpClient
@@ -35,4 +36,5 @@ val sharedModule = module {
     viewModel { CoinListViewModel(get()) }
     singleOf(::GetCoinsListUseCase)
     singleOf(::KtorCoinsRemoteDataSource).bind<CoinsRemoteDataSource>()
+    singleOf(::GetCoinDetailsUseCase)
 }

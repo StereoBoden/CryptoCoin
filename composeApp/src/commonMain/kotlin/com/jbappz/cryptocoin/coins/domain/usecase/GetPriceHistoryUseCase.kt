@@ -7,9 +7,10 @@ import com.jbappz.cryptocoin.coins.domain.Result
 import com.jbappz.cryptocoin.coins.domain.map
 import com.jbappz.cryptocoin.coins.domain.model.CoinPrice
 
-suspend fun getPriceHistoryUseCase(
-    coinsRemoteDataSource: CoinsRemoteDataSource,
-    coinId: String,
-): Result<List<CoinPrice>, DataError.Remote> {
-    return coinsRemoteDataSource.getPriceHistory(coinId).map { it.toCoinPrices() }
+class GetCoinPriceHistoryUseCase(
+    private val client: CoinsRemoteDataSource,
+) {
+    suspend fun execute(coinId: String): Result<List<CoinPrice>, DataError.Remote> {
+        return client.getPriceHistory(coinId).map { it.toCoinPrices() }
+    }
 }
