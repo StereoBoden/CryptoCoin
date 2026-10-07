@@ -3,6 +3,7 @@ package com.jbappz.cryptocoin.coins.data
 import com.jbappz.cryptocoin.coins.data.dto.CoinDetailsResponseDto
 import com.jbappz.cryptocoin.coins.data.dto.CoinPriceHistoryResponseDto
 import com.jbappz.cryptocoin.coins.data.dto.CoinsResponseDto
+import com.jbappz.cryptocoin.coins.data.network.safeCall
 import com.jbappz.cryptocoin.coins.domain.CoinsRemoteDataSource
 import com.jbappz.cryptocoin.coins.domain.DataError
 import com.jbappz.cryptocoin.coins.domain.Result

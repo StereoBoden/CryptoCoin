@@ -1,4 +1,4 @@
-package com.jbappz.cryptocoin.coins.data
+package com.jbappz.cryptocoin.coins.data.network
 
 import com.jbappz.cryptocoin.coins.domain.DataError
 import com.jbappz.cryptocoin.coins.domain.Result
