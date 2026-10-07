@@ -1,4 +1,4 @@
-package com.jbappz.cryptocoin.domain
+package com.jbappz.cryptocoin.coins.domain
 sealed interface DataError : Error {
     enum class Remote : DataError {
         REQUEST_TIMEOUT,

@@ -1,9 +1,9 @@
-package com.jbappz.cryptocoin.ui
+package com.jbappz.cryptocoin.coins.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jbappz.cryptocoin.domain.Result
-import com.jbappz.cryptocoin.domain.usecase.GetCoinsListUseCase
+import com.jbappz.cryptocoin.coins.domain.Result
+import com.jbappz.cryptocoin.coins.domain.usecase.GetCoinsListUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart

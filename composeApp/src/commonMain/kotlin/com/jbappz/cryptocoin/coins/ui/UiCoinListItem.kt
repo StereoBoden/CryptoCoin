@@ -1,4 +1,4 @@
-package com.jbappz.cryptocoin.ui
+package com.jbappz.cryptocoin.coins.ui
 
 data class UiCoinListItem(
     val id: String,

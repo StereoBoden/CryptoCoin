@@ -1,4 +1,4 @@
-package com.jbappz.cryptocoin.ui
+package com.jbappz.cryptocoin.coins.ui
 
 import androidx.compose.runtime.Stable
 import org.jetbrains.compose.resources.StringResource

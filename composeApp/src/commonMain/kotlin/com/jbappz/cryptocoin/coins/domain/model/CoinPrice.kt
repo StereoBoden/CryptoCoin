@@ -1,4 +1,4 @@
-package com.jbappz.cryptocoin.domain.model
+package com.jbappz.cryptocoin.coins.domain.model
 
 data class CoinPrice(
     val price: Double,

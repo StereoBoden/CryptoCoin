@@ -1,4 +1,4 @@
-package com.jbappz.cryptocoin.data.dto
+package com.jbappz.cryptocoin.coins.data.dto
 
 import kotlinx.serialization.Serializable
 
