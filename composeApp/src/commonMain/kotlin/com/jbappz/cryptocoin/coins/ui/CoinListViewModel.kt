@@ -15,21 +15,23 @@ import kotlinx.coroutines.flow.update
 class CoinListViewModel(
     private val getCoinsListUseCase: GetCoinsListUseCase,
 ): ViewModel() {
-    private val _state = MutableStateFlow(CoinsState())
+    private val _state = MutableStateFlow(CoinsState(isLoading = true))
     val state = _state
         .onStart {
             getAllCoins()
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = CoinsState(),
+            initialValue = CoinsState(isLoading = true),
         )
 
     private suspend fun getAllCoins() {
+        _state.update { it.copy(isLoading = true) }
         when(val coinsResponse = getCoinsListUseCase.execute()) {
             is Result.Success -> {
                 _state.update {
-                    CoinsState(
+                    it.copy(
+                        isLoading = false,
                         coins = coinsResponse.data.map { coinItem ->
                             UiCoinListItem(
                                 id = coinItem.coin.id,
@@ -47,6 +49,7 @@ class CoinListViewModel(
             is Result.Error -> {
                 _state.update {
                     it.copy(
+                        isLoading = false,
                         coins = emptyList(),
                         error = null, // TODO: Update error
                     )
