@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jbappz.cryptocoin.coins.domain.Result
 import com.jbappz.cryptocoin.coins.domain.usecase.GetCoinsListUseCase
+import com.jbappz.cryptocoin.util.formatCoinPrice
+import com.jbappz.cryptocoin.util.formatCoinPercentage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
@@ -34,8 +36,8 @@ class CoinListViewModel(
                                 name = coinItem.coin.name,
                                 symbol = coinItem.coin.symbol,
                                 iconUrl = coinItem.coin.iconUrl,
-                                formattedPrice = coinItem.coinPrice.price.toString(), // TODO: Format
-                                formattedChange = coinItem.coinPrice.change.toString(), // TODO: Format
+                                formattedPrice = formatCoinPrice(coinItem.coinPrice.price),
+                                formattedChange = formatCoinPercentage(coinItem.coinPrice.change),
                                 isPositive = coinItem.coinPrice.change >= 0
                             )
                         }
