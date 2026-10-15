@@ -7,6 +7,9 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
+import coil3.ImageLoader
+import coil3.compose.setSingletonImageLoaderFactory
+import coil3.svg.SvgDecoder
 
 private val LightColorScheme = lightColorScheme(
     primary = PrimaryLight,
@@ -54,6 +57,15 @@ fun CryptoCoinTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
+    // Support rendering .svg files with Coil
+    setSingletonImageLoaderFactory { context ->
+        ImageLoader.Builder(context)
+            .components {
+                add(SvgDecoder.Factory())
+            }
+            .build()
+    }
+
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
     val extendedColors = if (darkTheme) DarkExtendedColors else LightExtendedColors
 
