@@ -1,5 +1,6 @@
 package com.jbappz.cryptocoin.coins.data.network
 
+import com.jbappz.cryptocoin.BuildKonfig
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpTimeout
@@ -29,8 +30,7 @@ object HttpClientFactory {
             }
             install(HttpCache)
             defaultRequest {
-                // TODO: Get token from https://coinranking.com/api/documentation
-                headers { append("x-access-token", "") }
+                headers { append("x-access-token", BuildKonfig.COIN_RANKING_API_KEY) }
                 contentType(ContentType.Application.Json)
             }
         }
