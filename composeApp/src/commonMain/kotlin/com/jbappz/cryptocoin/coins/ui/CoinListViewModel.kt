@@ -51,7 +51,7 @@ class CoinListViewModel(
                     it.copy(
                         isLoading = false,
                         coins = emptyList(),
-                        error = null, // TODO: Update error
+                        error = coinsResponse.error.toStringResource(),
                     )
                 }
             }

@@ -27,12 +27,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.jbappz.cryptocoin.theme.CryptoCoinTheme
 import com.jbappz.cryptocoin.theme.extendedColors
+import cryptocoin.composeapp.generated.resources.Res
+import cryptocoin.composeapp.generated.resources.error_no_internet
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -68,6 +72,21 @@ fun CoinsListContent(
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
+            }
+        } else if (state.error != null) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = stringResource(state.error),
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
             }
         } else {
             CoinsList(
@@ -228,6 +247,17 @@ fun CoinsListContentEmptyPreview() {
     CryptoCoinTheme {
         CoinsListContent(
             state = CoinsState(coins = emptyList()),
+            onCoinClicked = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun CoinsListContentErrorPreview() {
+    CryptoCoinTheme {
+        CoinsListContent(
+            state = CoinsState(error = Res.string.error_no_internet),
             onCoinClicked = {}
         )
     }
