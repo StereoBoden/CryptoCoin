@@ -14,6 +14,6 @@ data class CoinPriceHistoryDto(
 
 @Serializable
 data class CoinPriceDto(
-    val price: String?,
-    val timestamp: Long?,
+    val price: Double?,
+    val timestamp: Long
 )
