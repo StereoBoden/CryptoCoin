@@ -1,6 +1,6 @@
 package com.jbappz.cryptocoin.coins.domain.model
 
-data class CoinPrice(
+data class PriceModel(
     val price: Double,
-    val change: Double,
+    val timestamp: Long
 )

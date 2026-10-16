@@ -2,12 +2,11 @@ package com.jbappz.cryptocoin.coins.data.mapper
 
 import com.jbappz.cryptocoin.coins.data.dto.CoinDetailsResponseDto
 import com.jbappz.cryptocoin.coins.data.dto.CoinItemDto
-import com.jbappz.cryptocoin.coins.data.dto.CoinPriceDto
 import com.jbappz.cryptocoin.coins.data.dto.CoinPriceHistoryResponseDto
 import com.jbappz.cryptocoin.coins.data.dto.CoinsResponseDto
 import com.jbappz.cryptocoin.coins.domain.model.Coin
 import com.jbappz.cryptocoin.coins.domain.model.CoinModel
-import com.jbappz.cryptocoin.coins.domain.model.CoinPrice
+import com.jbappz.cryptocoin.coins.domain.model.PriceModel
 
 fun CoinItemDto.toCoinModel(): CoinModel {
     return CoinModel(
@@ -17,10 +16,8 @@ fun CoinItemDto.toCoinModel(): CoinModel {
             symbol = symbol,
             iconUrl = iconUrl,
         ),
-        coinPrice = CoinPrice(
-            price = price,
-            change = change,
-        )
+        price = price,
+        change = change,
     )
 }
 
@@ -41,13 +38,13 @@ fun CoinDetailsResponseDto.toCoin(): Coin {
     return data.coin.toCoin()
 }
 
-fun CoinPriceDto.toCoinPrice(): CoinPrice {
-    return CoinPrice(
-        price = price ?: 0.0,
-        change = change ?: 0.0,
-    )
-}
-
-fun CoinPriceHistoryResponseDto.toCoinPrices(): List<CoinPrice> {
-    return data.history.map { it.toCoinPrice() }
+fun CoinPriceHistoryResponseDto.toPriceModels(): List<PriceModel> {
+    return data.history.mapNotNull {
+        if (it.price != null && it.timestamp != null) {
+            PriceModel(
+                price = it.price,
+                timestamp = it.timestamp,
+            )
+        } else null
+    }
 }
