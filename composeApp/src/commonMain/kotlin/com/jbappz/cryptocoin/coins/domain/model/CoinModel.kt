@@ -2,5 +2,6 @@ package com.jbappz.cryptocoin.coins.domain.model
 
 data class CoinModel(
     val coin: Coin,
-    val coinPrice: CoinPrice,
+    val price: Double,
+    val change: Double,
 )
