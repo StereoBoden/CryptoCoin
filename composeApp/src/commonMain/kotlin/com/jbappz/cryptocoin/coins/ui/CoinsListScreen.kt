@@ -333,10 +333,41 @@ fun CoinsListContentPreview() {
 
 @LightDarkPreview
 @Composable
-fun CoinsListContentEmptyPreview() {
+fun CoinsListContentChartPositivePreview() {
     CryptoCoinTheme {
         CoinsListContent(
-            state = CoinsState(coins = emptyList()),
+            state = CoinsState(
+                coins = listOf(
+                    previewCoin1,
+                ),
+                chartState = UiChartState(
+                    isLoading = false,
+                    sparkLine = listOf(10.0, 15.0, 12.0, 18.0, 20.0, 17.0, 25.0),
+                    coinName = previewCoin1.name
+                )
+            ),
+            onCoinClicked = {},
+            onCoinLongPressed = {},
+            onDismissChart = {},
+        )
+    }
+}
+
+@LightDarkPreview
+@Composable
+fun CoinsListContentChartNegativePreview() {
+    CryptoCoinTheme {
+        CoinsListContent(
+            state = CoinsState(
+                coins = listOf(
+                    previewCoin2,
+                ),
+                chartState = UiChartState(
+                    isLoading = false,
+                    sparkLine = listOf(25.0, 15.0, 12.0, 18.0, 20.0, 17.0, 2.0),
+                    coinName = previewCoin2.name
+                )
+            ),
             onCoinClicked = {},
             onCoinLongPressed = {},
             onDismissChart = {},
