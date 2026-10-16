@@ -46,7 +46,7 @@ class CoinListViewModel(
                             chartState = UiChartState(
                                 sparkLine = priceHistory.data.sortedBy { it.timestamp }.map { it.price },
                                 isLoading = false,
-                                coinName = _state.value.coins.find { it.id == coinId }?.name.orEmpty(),
+                                coinName = currentState.coins.find { it.id == coinId }?.name.orEmpty(),
                             )
                         )
                     }

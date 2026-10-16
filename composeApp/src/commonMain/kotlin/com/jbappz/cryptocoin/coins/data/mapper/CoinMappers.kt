@@ -16,8 +16,8 @@ fun CoinItemDto.toCoinModel(): CoinModel {
             symbol = symbol,
             iconUrl = iconUrl,
         ),
-        price = price,
-        change = change,
+        price = price?.toDoubleOrNull() ?: 0.0,
+        change = change?.toDoubleOrNull() ?: 0.0,
     )
 }
 
@@ -40,9 +40,10 @@ fun CoinDetailsResponseDto.toCoin(): Coin {
 
 fun CoinPriceHistoryResponseDto.toPriceModels(): List<PriceModel> {
     return data.history.mapNotNull {
-        if (it.price != null && it.timestamp != null) {
+        val priceDouble = it.price?.toDoubleOrNull()
+        if (priceDouble != null && it.timestamp != null) {
             PriceModel(
-                price = it.price,
+                price = priceDouble,
                 timestamp = it.timestamp,
             )
         } else null
