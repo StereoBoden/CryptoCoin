@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -237,23 +238,24 @@ fun CoinChartDialog(
             )
         },
         text = {
-            if (uiChartState.isLoading) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(16f / 9f),
+                contentAlignment = Alignment.Center,
+            ) {
+                if (uiChartState.isLoading) {
                     CircularProgressIndicator(modifier = Modifier.size(32.dp))
+                } else {
+                    PerformanceChart(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        nodes = uiChartState.sparkLine,
+                        profitColor = MaterialTheme.extendedColors.profitGreen,
+                        lossColor = MaterialTheme.extendedColors.lossRed,
+                    )
                 }
-            } else {
-                PerformanceChart(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .padding(16.dp),
-                    nodes = uiChartState.sparkLine,
-                    profitColor = MaterialTheme.extendedColors.profitGreen,
-                    lossColor = MaterialTheme.extendedColors.lossRed,
-                )
             }
         },
         confirmButton = {},
