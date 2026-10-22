@@ -1,13 +1,13 @@
 package com.jbappz.cryptocoin.coins.ui
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -31,18 +33,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import com.jbappz.cryptocoin.coins.ui.component.PerformanceChart
 import com.jbappz.cryptocoin.theme.CryptoCoinTheme
 import com.jbappz.cryptocoin.theme.LightDarkPreview
 import com.jbappz.cryptocoin.theme.extendedColors
 import cryptocoin.composeapp.generated.resources.Res
 import cryptocoin.composeapp.generated.resources.error_no_internet
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun CoinsListScreen(
     onCoinClicked: (String) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     val coinsListViewModel = koinViewModel<CoinListViewModel>()
     val state by coinsListViewModel.state.collectAsStateWithLifecycle()
@@ -50,7 +53,8 @@ fun CoinsListScreen(
     CoinsListContent(
         state = state,
         onCoinClicked = onCoinClicked,
-        modifier = modifier,
+        onCoinLongPressed = { coinId -> coinsListViewModel.onCoinLongPressed(coinId) },
+        onDismissChart = { coinsListViewModel.onDismissChart() },
     )
 }
 
@@ -58,60 +62,92 @@ fun CoinsListScreen(
 fun CoinsListContent(
     state: CoinsState,
     onCoinClicked: (String) -> Unit,
-    modifier: Modifier = Modifier,
+    onCoinLongPressed: (String) -> Unit,
+    onDismissChart: () -> Unit,
 ) {
     Scaffold(
-        modifier = modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
         if (state.isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            LoadingContent(innerPadding)
         } else if (state.error != null) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = stringResource(state.error),
-                    color = MaterialTheme.colorScheme.error,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-            }
+           ErrorContent(innerPadding, state.error)
         } else {
-            CoinsList(
-                coins = state.coins,
+            CoinsContent(
+                state = state,
+                innerPadding = innerPadding,
                 onCoinClicked = onCoinClicked,
-                contentPadding = innerPadding,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .consumeWindowInsets(innerPadding)
+                onCoinLongPressed = onCoinLongPressed,
+                onDismissChart = onDismissChart,
             )
         }
     }
 }
 
 @Composable
+fun LoadingContent(innerPadding: PaddingValues) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+@Composable
+fun ErrorContent(innerPadding: PaddingValues, errorStringRes: StringResource) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = stringResource(errorStringRes),
+            color = MaterialTheme.colorScheme.error,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyLarge,
+        )
+    }
+}
+
+@Composable
+fun CoinsContent(
+    state: CoinsState,
+    innerPadding: PaddingValues = PaddingValues(0.dp),
+    onCoinClicked: (String) -> Unit,
+    onCoinLongPressed: (String) -> Unit,
+    onDismissChart: () -> Unit,
+) {
+    if (state.chartState != null) {
+        CoinChartDialog(
+            uiChartState = state.chartState,
+            onDismiss = onDismissChart,
+        )
+    }
+    CoinsList(
+        coins = state.coins,
+        innerPadding = innerPadding,
+        onCoinClicked = onCoinClicked,
+        onCoinLongPressed = onCoinLongPressed,
+    )
+}
+
+@Composable
 fun CoinsList(
     coins: List<UiCoinListItem>,
+    innerPadding: PaddingValues = PaddingValues(0.dp),
     onCoinClicked: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp),
+    onCoinLongPressed: (String) -> Unit,
 ) {
     LazyColumn(
+        contentPadding = innerPadding,
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = contentPadding,
-        modifier = modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
     ) {
         item {
             Text(
@@ -124,7 +160,8 @@ fun CoinsList(
         items(coins) { coin ->
             CoinListItem(
                 coin = coin,
-                onCoinClicked = onCoinClicked
+                onCoinClicked = onCoinClicked,
+                onCoinLongPressed = onCoinLongPressed,
             )
         }
     }
@@ -134,12 +171,16 @@ fun CoinsList(
 fun CoinListItem(
     coin: UiCoinListItem,
     onCoinClicked: (String) -> Unit,
+    onCoinLongPressed: (String) -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onCoinClicked(coin.id) }
+            .combinedClickable(
+                onLongClick = { onCoinLongPressed(coin.id) },
+                onClick = { onCoinClicked(coin.id) }
+            )
             .padding(16.dp)
     ) {
         AsyncImage(
@@ -183,6 +224,53 @@ fun CoinListItem(
     }
 }
 
+@Composable
+fun CoinChartDialog(
+    uiChartState: UiChartState,
+    onDismiss: () -> Unit,
+) {
+    AlertDialog(
+        modifier = Modifier.fillMaxWidth(),
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = "24h Price chart for ${uiChartState.coinName}",
+            )
+        },
+        text = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(16f / 9f),
+                contentAlignment = Alignment.Center,
+            ) {
+                if (uiChartState.isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.size(32.dp))
+                } else {
+                    PerformanceChart(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        nodes = uiChartState.sparkLine,
+                        profitColor = MaterialTheme.extendedColors.profitGreen,
+                        lossColor = MaterialTheme.extendedColors.lossRed,
+                    )
+                }
+            }
+        },
+        confirmButton = {},
+        dismissButton = {
+            Button(
+                onClick = onDismiss
+            ) {
+                Text(
+                    text = "Close",
+                )
+            }
+        }
+    )
+}
+
 private val previewCoin1 = UiCoinListItem(
     id = "bitcoin",
     name = "Bitcoin",
@@ -219,7 +307,9 @@ fun CoinsListContentLoadingPreview() {
     CryptoCoinTheme {
         CoinsListContent(
             state = CoinsState(isLoading = true),
-            onCoinClicked = {}
+            onCoinClicked = {},
+            onCoinLongPressed = {},
+            onDismissChart = {},
         )
     }
 }
@@ -236,18 +326,53 @@ fun CoinsListContentPreview() {
                     previewCoin3
                 )
             ),
-            onCoinClicked = {}
+            onCoinClicked = {},
+            onCoinLongPressed = {},
+            onDismissChart = {},
         )
     }
 }
 
 @LightDarkPreview
 @Composable
-fun CoinsListContentEmptyPreview() {
+fun CoinsListContentChartPositivePreview() {
     CryptoCoinTheme {
         CoinsListContent(
-            state = CoinsState(coins = emptyList()),
-            onCoinClicked = {}
+            state = CoinsState(
+                coins = listOf(
+                    previewCoin1,
+                ),
+                chartState = UiChartState(
+                    isLoading = false,
+                    sparkLine = listOf(10.0, 15.0, 12.0, 18.0, 20.0, 17.0, 25.0),
+                    coinName = previewCoin1.name
+                )
+            ),
+            onCoinClicked = {},
+            onCoinLongPressed = {},
+            onDismissChart = {},
+        )
+    }
+}
+
+@LightDarkPreview
+@Composable
+fun CoinsListContentChartNegativePreview() {
+    CryptoCoinTheme {
+        CoinsListContent(
+            state = CoinsState(
+                coins = listOf(
+                    previewCoin2,
+                ),
+                chartState = UiChartState(
+                    isLoading = false,
+                    sparkLine = listOf(25.0, 15.0, 12.0, 18.0, 20.0, 17.0, 2.0),
+                    coinName = previewCoin2.name
+                )
+            ),
+            onCoinClicked = {},
+            onCoinLongPressed = {},
+            onDismissChart = {},
         )
     }
 }
@@ -258,7 +383,9 @@ fun CoinsListContentErrorPreview() {
     CryptoCoinTheme {
         CoinsListContent(
             state = CoinsState(error = Res.string.error_no_internet),
-            onCoinClicked = {}
+            onCoinClicked = {},
+            onCoinLongPressed = {},
+            onDismissChart = {},
         )
     }
 }

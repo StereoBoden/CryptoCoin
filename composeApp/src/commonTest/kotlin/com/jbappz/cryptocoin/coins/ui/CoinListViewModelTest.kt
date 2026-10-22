@@ -6,6 +6,7 @@ import com.jbappz.cryptocoin.coins.data.dto.CoinsResponseDto
 import com.jbappz.cryptocoin.coins.domain.CoinsRemoteDataSource
 import com.jbappz.cryptocoin.coins.domain.DataError
 import com.jbappz.cryptocoin.coins.domain.Result
+import com.jbappz.cryptocoin.coins.domain.usecase.GetCoinPriceHistoryUseCase
 import com.jbappz.cryptocoin.coins.domain.usecase.GetCoinsListUseCase
 import cryptocoin.composeapp.generated.resources.Res
 import cryptocoin.composeapp.generated.resources.error_no_internet
@@ -45,7 +46,8 @@ class CoinListViewModelTest {
             listOfCoinsResult = Result.Error(DataError.Remote.NO_INTERNET)
         )
         val useCase = GetCoinsListUseCase(fakeDataSource)
-        val viewModel = CoinListViewModel(useCase)
+        val priceHistoryUseCase = GetCoinPriceHistoryUseCase(fakeDataSource)
+        val viewModel = CoinListViewModel(useCase, priceHistoryUseCase)
 
         // WHEN
         val state = viewModel.state.first { !it.isLoading }
@@ -63,7 +65,8 @@ class CoinListViewModelTest {
             listOfCoinsResult = Result.Error(DataError.Remote.REQUEST_TIMEOUT)
         )
         val useCase = GetCoinsListUseCase(fakeDataSource)
-        val viewModel = CoinListViewModel(useCase)
+        val priceHistoryUseCase = GetCoinPriceHistoryUseCase(fakeDataSource)
+        val viewModel = CoinListViewModel(useCase, priceHistoryUseCase)
 
         // WHEN
         val state = viewModel.state.first { !it.isLoading }
