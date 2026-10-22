@@ -1,6 +1,7 @@
 @file:JvmName("CommonModuleKt")
 package com.jbappz.cryptocoin.di
 
+import androidx.room.RoomDatabase
 import com.jbappz.cryptocoin.coins.data.KtorCoinsRemoteDataSource
 import com.jbappz.cryptocoin.coins.data.network.HttpClientFactory
 import com.jbappz.cryptocoin.coins.domain.CoinsRemoteDataSource
@@ -8,6 +9,9 @@ import com.jbappz.cryptocoin.coins.domain.usecase.GetCoinDetailsUseCase
 import com.jbappz.cryptocoin.coins.domain.usecase.GetCoinPriceHistoryUseCase
 import com.jbappz.cryptocoin.coins.domain.usecase.GetCoinsListUseCase
 import com.jbappz.cryptocoin.coins.ui.CoinListViewModel
+import com.jbappz.cryptocoin.database.portfolio.PortfolioDatabase
+import com.jbappz.cryptocoin.database.portfolio.getPortfolioDatabase
+import com.jbappz.cryptocoin.portfolio.data.local.PortfolioDao
 import io.ktor.client.HttpClient
 import kotlin.jvm.JvmName
 import org.koin.core.context.startKoin
@@ -39,4 +43,12 @@ val sharedModule = module {
     singleOf(::GetCoinPriceHistoryUseCase)
     singleOf(::KtorCoinsRemoteDataSource).bind<CoinsRemoteDataSource>()
     singleOf(::GetCoinDetailsUseCase)
+
+    // Portfolio Database
+    single<PortfolioDatabase> {
+        getPortfolioDatabase(get<RoomDatabase.Builder<PortfolioDatabase>>())
+    }
+    single<PortfolioDao> {
+        get<PortfolioDatabase>().portfolioDao()
+    }
 }
