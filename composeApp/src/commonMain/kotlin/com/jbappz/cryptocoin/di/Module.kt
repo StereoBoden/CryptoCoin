@@ -11,6 +11,7 @@ import com.jbappz.cryptocoin.coins.domain.usecase.GetCoinsListUseCase
 import com.jbappz.cryptocoin.coins.ui.CoinListViewModel
 import com.jbappz.cryptocoin.database.portfolio.PortfolioDatabase
 import com.jbappz.cryptocoin.database.portfolio.getPortfolioDatabase
+import com.jbappz.cryptocoin.portfolio.data.local.PortfolioDao
 import io.ktor.client.HttpClient
 import kotlin.jvm.JvmName
 import org.koin.core.context.startKoin
@@ -47,7 +48,7 @@ val sharedModule = module {
     single<PortfolioDatabase> {
         getPortfolioDatabase(get<RoomDatabase.Builder<PortfolioDatabase>>())
     }
-    single<com.jbappz.cryptocoin.portfolio.data.local.PortfolioDao> {
+    single<PortfolioDao> {
         get<PortfolioDatabase>().portfolioDao()
     }
 }
