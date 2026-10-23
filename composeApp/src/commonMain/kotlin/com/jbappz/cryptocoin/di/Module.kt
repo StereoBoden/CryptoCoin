@@ -13,6 +13,7 @@ import com.jbappz.cryptocoin.database.portfolio.PortfolioDatabase
 import com.jbappz.cryptocoin.database.portfolio.getPortfolioDatabase
 import com.jbappz.cryptocoin.portfolio.data.PortfolioRepositoryImpl
 import com.jbappz.cryptocoin.portfolio.data.local.PortfolioDao
+import com.jbappz.cryptocoin.portfolio.data.local.UserBalanceDao
 import com.jbappz.cryptocoin.portfolio.domain.PortfolioRepository
 import com.jbappz.cryptocoin.portfolio.ui.PortfolioViewModel
 import io.ktor.client.HttpClient
@@ -55,5 +56,8 @@ val sharedModule = module {
     }
     single<PortfolioDao> {
         get<PortfolioDatabase>().portfolioDao()
+    }
+    single<UserBalanceDao> {
+        get<PortfolioDatabase>().userBalanceDao()
     }
 }
