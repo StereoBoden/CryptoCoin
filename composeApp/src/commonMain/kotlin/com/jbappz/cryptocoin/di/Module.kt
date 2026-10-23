@@ -11,7 +11,9 @@ import com.jbappz.cryptocoin.coins.domain.usecase.GetCoinsListUseCase
 import com.jbappz.cryptocoin.coins.ui.CoinListViewModel
 import com.jbappz.cryptocoin.database.portfolio.PortfolioDatabase
 import com.jbappz.cryptocoin.database.portfolio.getPortfolioDatabase
+import com.jbappz.cryptocoin.portfolio.data.PortfolioRepositoryImpl
 import com.jbappz.cryptocoin.portfolio.data.local.PortfolioDao
+import com.jbappz.cryptocoin.portfolio.domain.PortfolioRepository
 import io.ktor.client.HttpClient
 import kotlin.jvm.JvmName
 import org.koin.core.context.startKoin
@@ -43,6 +45,9 @@ val sharedModule = module {
     singleOf(::GetCoinPriceHistoryUseCase)
     singleOf(::KtorCoinsRemoteDataSource).bind<CoinsRemoteDataSource>()
     singleOf(::GetCoinDetailsUseCase)
+
+    // Portfolio Repository
+    singleOf(::PortfolioRepositoryImpl).bind<PortfolioRepository>()
 
     // Portfolio Database
     single<PortfolioDatabase> {
