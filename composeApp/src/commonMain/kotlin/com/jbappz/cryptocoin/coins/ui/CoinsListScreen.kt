@@ -168,7 +168,7 @@ fun CoinsList(
 }
 
 @Composable
-fun CoinListItem(
+private fun CoinListItem(
     coin: UiCoinListItem,
     onCoinClicked: (String) -> Unit,
     onCoinLongPressed: (String) -> Unit,
