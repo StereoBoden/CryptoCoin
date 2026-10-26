@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import com.jbappz.cryptocoin.theme.CryptoCoinTheme
 import com.jbappz.cryptocoin.theme.LightDarkPreview
-import com.jbappz.cryptocoin.theme.extendedColors
+import com.jbappz.cryptocoin.theme.LocalExtendedColors
 
 @Composable
 fun PerformanceChart(
@@ -80,8 +80,8 @@ fun PerformanceChartCombinedPreview() {
             Spacer(modifier = Modifier.height(8.dp))
             PerformanceChart(
                 nodes = positiveTrendNodes,
-                profitColor = MaterialTheme.extendedColors.profitGreen,
-                lossColor = MaterialTheme.extendedColors.lossRed,
+                profitColor = LocalExtendedColors.current.profitGreen,
+                lossColor = LocalExtendedColors.current.lossRed,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(120.dp)
@@ -95,8 +95,8 @@ fun PerformanceChartCombinedPreview() {
             Spacer(modifier = Modifier.height(8.dp))
             PerformanceChart(
                 nodes = negativeTrendNodes,
-                profitColor = MaterialTheme.extendedColors.profitGreen,
-                lossColor = MaterialTheme.extendedColors.lossRed,
+                profitColor = LocalExtendedColors.current.profitGreen,
+                lossColor = LocalExtendedColors.current.lossRed,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(120.dp)

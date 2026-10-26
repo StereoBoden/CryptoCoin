@@ -22,6 +22,7 @@ private val LightColorScheme = lightColorScheme(
     onBackground = OnBackgroundLight,
     surface = SurfaceLight,
     onSurface = OnSurfaceLight,
+    inversePrimary = InversePrimaryLight,
 )
 
 private val DarkColorScheme = darkColorScheme(
@@ -35,6 +36,7 @@ private val DarkColorScheme = darkColorScheme(
     onBackground = OnBackgroundDark,
     surface = SurfaceDark,
     onSurface = OnSurfaceDark,
+    inversePrimary = InversePrimaryDark,
 )
 
 private val LightExtendedColors = ExtendedColors(
@@ -46,11 +48,6 @@ private val DarkExtendedColors = ExtendedColors(
     profitGreen = ProfitGreenDark,
     lossRed = LossRedDark,
 )
-
-val MaterialTheme.extendedColors: ExtendedColors
-    @Composable
-    @ReadOnlyComposable
-    get() = LocalExtendedColors.current
 
 @Composable
 fun CryptoCoinTheme(

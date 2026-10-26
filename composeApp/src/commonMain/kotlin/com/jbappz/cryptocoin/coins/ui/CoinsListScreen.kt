@@ -36,7 +36,7 @@ import coil3.compose.AsyncImage
 import com.jbappz.cryptocoin.coins.ui.component.PerformanceChart
 import com.jbappz.cryptocoin.theme.CryptoCoinTheme
 import com.jbappz.cryptocoin.theme.LightDarkPreview
-import com.jbappz.cryptocoin.theme.extendedColors
+import com.jbappz.cryptocoin.theme.LocalExtendedColors
 import cryptocoin.composeapp.generated.resources.Res
 import cryptocoin.composeapp.generated.resources.error_no_internet
 import org.jetbrains.compose.resources.StringResource
@@ -168,7 +168,7 @@ fun CoinsList(
 }
 
 @Composable
-fun CoinListItem(
+private fun CoinListItem(
     coin: UiCoinListItem,
     onCoinClicked: (String) -> Unit,
     onCoinLongPressed: (String) -> Unit,
@@ -217,7 +217,7 @@ fun CoinListItem(
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = coin.formattedChange,
-                color = if (coin.isPositive) MaterialTheme.extendedColors.profitGreen else MaterialTheme.extendedColors.lossRed,
+                color = if (coin.isPositive) LocalExtendedColors.current.profitGreen else LocalExtendedColors.current.lossRed,
                 fontSize = MaterialTheme.typography.titleSmall.fontSize,
             )
         }
@@ -252,8 +252,8 @@ fun CoinChartDialog(
                             .fillMaxSize()
                             .padding(16.dp),
                         nodes = uiChartState.sparkLine,
-                        profitColor = MaterialTheme.extendedColors.profitGreen,
-                        lossColor = MaterialTheme.extendedColors.lossRed,
+                        profitColor = LocalExtendedColors.current.profitGreen,
+                        lossColor = LocalExtendedColors.current.lossRed,
                     )
                 }
             }
