@@ -35,7 +35,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.jbappz.cryptocoin.theme.CryptoCoinTheme
 import com.jbappz.cryptocoin.theme.LightDarkPreview
-import com.jbappz.cryptocoin.theme.extendedColors
+import com.jbappz.cryptocoin.theme.LocalExtendedColors
 import cryptocoin.composeapp.generated.resources.Res
 import cryptocoin.composeapp.generated.resources.error_no_internet
 import org.koin.compose.viewmodel.koinViewModel
@@ -94,7 +94,7 @@ fun LoadingContent() {
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(
-            color = MaterialTheme.extendedColors.profitGreen,
+            color = LocalExtendedColors.current.profitGreen,
             modifier = Modifier.size(32.dp)
         )
     }
@@ -165,7 +165,7 @@ fun PortfolioBalance(
                 Button(
                     onClick = onBuyButtonClicked,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.extendedColors.profitGreen,
+                        containerColor = LocalExtendedColors.current.profitGreen,
                     ),
                     contentPadding = PaddingValues(
                         horizontal = 64.dp,
@@ -276,7 +276,7 @@ fun PortfolioCoinListItem(
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = coin.performancePercentText,
-                color = if (coin.isPositive) MaterialTheme.extendedColors.profitGreen else MaterialTheme.extendedColors.lossRed,
+                color = if (coin.isPositive) LocalExtendedColors.current.profitGreen else LocalExtendedColors.current.lossRed,
                 fontSize = MaterialTheme.typography.titleSmall.fontSize,
             )
         }
@@ -303,7 +303,7 @@ fun PortfolioEmpty(
         Button(
             onClick = onDiscoverCoinsClicked,
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.extendedColors.profitGreen,
+                containerColor = LocalExtendedColors.current.profitGreen,
             )
         ) {
             Text(
