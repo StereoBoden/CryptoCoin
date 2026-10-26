@@ -22,6 +22,7 @@ buildkonfig = "0.23.0"
 room = "2.8.5"
 sqlite = "2.7.1"
 ksp = "2.1.10-1.0.31"
+kover = "0.9.11"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -65,3 +66,4 @@ kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", versio
 buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfig" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
