@@ -28,17 +28,21 @@ CryptoCoin is a modern Kotlin Multiplatform (KMP) application designed to monito
 
 ---
 
-## 🤖 CI/CD & Testing
+## 🤖 CI/CD & AI Code Reviews
 
-This project utilizes **GitHub Actions** for continuous integration. The CI workflow automatically runs unit tests and measures code coverage using **KotlinX Kover** on every push and pull request.
+This project utilizes **GitHub Actions** for continuous integration and automated code reviews.
 
-- **Workflow File**: [.github/workflows/ci.yml](.github/workflows/ci.yml)
-- **Steps executed in CI**:
-  1. Checks out the repository.
-  2. Sets up JDK 17 (Temurin) with Gradle caching.
-  3. Grants execution permissions to `gradlew`.
-  4. Runs all unit tests and generates code coverage reports (`./gradlew testDebugUnitTest koverHtmlReport`).
-  5. Uploads the Kover HTML coverage report as a workflow artifact.
+### Workflows & AI Guidelines
+- **CI Workflow**: [.github/workflows/ci.yml](.github/workflows/ci.yml) — Runs unit tests and measures code coverage using **KotlinX Kover** on every push and pull request.
+- **AI PR Reviewer Workflow**: [.github/workflows/ai-reviewer.yml](.github/workflows/ai-reviewer.yml) — Provides automated AI pull request reviews on pull requests.
+- **AI Agent Guidelines**: [AGENTS.md](/AGENTS.md) — Comprehensive rules and false-positive suppression guidelines for AI code reviewers and coding assistants (covering Compose UI, KMP conventions, Koin DI, Room DAOs, and CI permissions).
+
+### CI Steps Executed
+1. Checks out the repository.
+2. Sets up JDK 17 (Temurin) with Gradle caching.
+3. Grants execution permissions to `gradlew`.
+4. Runs all unit tests and generates code coverage reports (`./gradlew testDebugUnitTest koverHtmlReport`).
+5. Uploads the Kover HTML coverage report as a workflow artifact.
 
 To run unit tests and generate coverage reports locally:
 ```bash
