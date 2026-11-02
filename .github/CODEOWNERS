@@ -1,0 +1,3 @@
+# Global code owners for the repository
+# Any pull request affecting any files must be approved by `@StereoBoden`.
+* @StereoBoden
