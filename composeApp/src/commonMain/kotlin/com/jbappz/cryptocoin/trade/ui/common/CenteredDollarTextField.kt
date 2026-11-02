@@ -1,4 +1,4 @@
-package com.jbappz.cryptocoin.portfolio.ui
+package com.jbappz.cryptocoin.trade.ui.common
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
