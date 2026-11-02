@@ -20,6 +20,13 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel managing UI state and user interactions for buying cryptocurrency.
+ *
+ * @property getCoinDetailsUseCase Use case to retrieve coin details and price.
+ * @property portFolioRepository Repository to observe cash balance.
+ * @property buyCoinUseCase Use case to perform the coin purchase.
+ */
 class BuyViewModel(
     private val getCoinDetailsUseCase: GetCoinDetailsUseCase,
     private val portFolioRepository: PortfolioRepository,
@@ -28,6 +35,10 @@ class BuyViewModel(
     private val coinId = "1" // TODO: Remove when navigation implemented
     private val _amount = MutableStateFlow("")
     private val _state = MutableStateFlow(TradeState())
+
+    /**
+     * StateFlow exposing the current UI state of the Buy screen.
+     */
     val state = combine(
         _state,
         _amount
@@ -74,10 +85,18 @@ class BuyViewModel(
         }
     }
 
+    /**
+     * Updates the purchase amount entered by the user.
+     *
+     * @param amount The new fiat amount string.
+     */
     fun onAmountChanged(amount: String) {
         _amount.value = amount
     }
 
+    /**
+     * Triggers the buy operation using the currently selected coin and entered amount.
+     */
     fun onBuyClicked() {
         val tradeCoin = state.value.coin ?: return
         viewModelScope.launch {
@@ -101,6 +120,5 @@ class BuyViewModel(
                 }
             }
         }
-
     }
 }

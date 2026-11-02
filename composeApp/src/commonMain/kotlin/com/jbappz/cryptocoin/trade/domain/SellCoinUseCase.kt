@@ -7,9 +7,26 @@ import com.jbappz.cryptocoin.coins.domain.model.Coin
 import com.jbappz.cryptocoin.portfolio.domain.PortfolioRepository
 import kotlinx.coroutines.flow.firstOrNull
 
+/**
+ * Use case for selling cryptocurrency coins from the portfolio.
+ *
+ * Validates the user's current holdings for the given coin, deducts the sold amount,
+ * removes the coin from portfolio if remaining value drops below threshold,
+ * and adds the sell proceeds to the cash balance.
+ *
+ * @property portfolioRepository The repository managing portfolio holdings and cash balance.
+ */
 class SellCoinUseCase(
     private val portfolioRepository: PortfolioRepository,
 ) {
+    /**
+     * Executes a sell order for a specified coin and fiat amount.
+     *
+     * @param coin The coin being sold.
+     * @param amountInFiat The fiat amount to sell.
+     * @param price The current market price per unit of the coin.
+     * @return [Result.Success] if the sale succeeds, or [Result.Error] with [DataError.Local.INSUFFICIENT_FUNDS] or repository errors.
+     */
     suspend fun sellCoin(
         coin: Coin,
         amountInFiat: Double,

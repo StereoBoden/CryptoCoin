@@ -8,9 +8,26 @@ import com.jbappz.cryptocoin.portfolio.domain.PortfolioCoinModel
 import com.jbappz.cryptocoin.portfolio.domain.PortfolioRepository
 import kotlinx.coroutines.flow.firstOrNull
 
+/**
+ * Use case for purchasing cryptocurrency coins.
+ *
+ * Checks if the user has sufficient cash balance, updates or adds the coin
+ * in the portfolio with the recalculated average purchase price and amounts,
+ * and updates the remaining cash balance.
+ *
+ * @property portfolioRepository The repository managing portfolio coins and cash balance.
+ */
 class BuyCoinUseCase(
     private val portfolioRepository: PortfolioRepository,
 ) {
+    /**
+     * Executes the buy order for a specified coin and fiat amount.
+     *
+     * @param coin The coin to be purchased.
+     * @param amountInFiat The total amount in fiat currency to spend on the purchase.
+     * @param price The current price per unit of the coin.
+     * @return [Result.Success] if the purchase succeeds, or [Result.Error] with [DataError.Local.INSUFFICIENT_FUNDS] or repository errors.
+     */
     suspend fun buyCoin(
         coin: Coin,
         amountInFiat: Double,
