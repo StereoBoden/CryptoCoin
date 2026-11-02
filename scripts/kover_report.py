@@ -26,7 +26,13 @@ if __name__ == '__main__':
     if not counters:
         sys.exit(1)
 
+    inst_data = counters.get('INSTRUCTION', {'missed': 0, 'covered': 0, 'total': 0})
+    inst_covered = inst_data['covered']
+    inst_total = inst_data['total']
+    total_pct = (inst_covered / inst_total * 100) if inst_total > 0 else 0.0
+
     md = "## 📊 Kover Code Coverage Report\n\n"
+    md += f"> **Total Project Coverage:** **`{total_pct:.2f}%`** (Instruction-level bytecode coverage)\n\n"
     md += "| Metric | Covered | Missed | Total | Percentage |\n"
     md += "|---|---|---|---|---|\n"
 

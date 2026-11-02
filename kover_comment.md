@@ -1,5 +1,7 @@
 ## 📊 Kover Code Coverage Report
 
+> **Total Project Coverage:** **`17.31%`** (Instruction-level bytecode coverage)
+
 | Metric | Covered | Missed | Total | Percentage |
 |---|---|---|---|---|
 | **Instructions** | 1,790 | 8,550 | 10,340 | **17.31%** |
