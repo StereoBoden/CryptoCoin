@@ -18,6 +18,8 @@ import com.jbappz.cryptocoin.portfolio.domain.PortfolioRepository
 import com.jbappz.cryptocoin.portfolio.ui.PortfolioViewModel
 import com.jbappz.cryptocoin.trade.domain.BuyCoinUseCase
 import com.jbappz.cryptocoin.trade.domain.SellCoinUseCase
+import com.jbappz.cryptocoin.trade.ui.buy.BuyViewModel
+import com.jbappz.cryptocoin.trade.ui.sell.SellViewModel
 import io.ktor.client.HttpClient
 import kotlin.jvm.JvmName
 import org.koin.core.context.startKoin
@@ -66,4 +68,6 @@ val sharedModule = module {
     // Trade
     singleOf(::BuyCoinUseCase)
     singleOf(::SellCoinUseCase)
+    viewModelOf(::BuyViewModel)
+    viewModelOf(::SellViewModel)
 }

@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.jbappz.cryptocoin.portfolio.ui.CenteredDollarTextField
 import com.jbappz.cryptocoin.theme.CryptoCoinTheme
 import com.jbappz.cryptocoin.theme.LightDarkPreview
 import com.jbappz.cryptocoin.theme.LocalExtendedColors
@@ -83,7 +84,10 @@ fun TradeScreen(
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onBackground,
             )
-            // TODO: TEXT FIELD
+            CenteredDollarTextField(
+                amountText = state.amount,
+                onAmountChange = onAmountChange
+            )
             Text(
                 text = state.availableAmount,
                 style = MaterialTheme.typography.labelLarge,
