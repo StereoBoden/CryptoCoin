@@ -80,7 +80,7 @@ class SellViewModelTest {
         val getCoinDetailsUseCase = GetCoinDetailsUseCase(fakeDataSource)
         val sellCoinUseCase = SellCoinUseCase(fakeRepository)
 
-        val viewModel = SellViewModel(getCoinDetailsUseCase, fakeRepository, sellCoinUseCase)
+        val viewModel = SellViewModel(getCoinDetailsUseCase, fakeRepository, sellCoinUseCase, "1")
         val state = viewModel.state.first { !it.isLoading }
 
         assertFalse(state.isLoading)
@@ -114,7 +114,7 @@ class SellViewModelTest {
         val getCoinDetailsUseCase = GetCoinDetailsUseCase(fakeDataSource)
         val sellCoinUseCase = SellCoinUseCase(fakeRepository)
 
-        val viewModel = SellViewModel(getCoinDetailsUseCase, fakeRepository, sellCoinUseCase)
+        val viewModel = SellViewModel(getCoinDetailsUseCase, fakeRepository, sellCoinUseCase, "1")
         val state = viewModel.state.first { !it.isLoading }
 
         assertFalse(state.isLoading)
@@ -151,7 +151,7 @@ class SellViewModelTest {
         val getCoinDetailsUseCase = GetCoinDetailsUseCase(fakeDataSource)
         val sellCoinUseCase = SellCoinUseCase(fakeRepository)
 
-        val viewModel = SellViewModel(getCoinDetailsUseCase, fakeRepository, sellCoinUseCase)
+        val viewModel = SellViewModel(getCoinDetailsUseCase, fakeRepository, sellCoinUseCase, "1")
         viewModel.state.first { !it.isLoading }
 
         val collectJob = backgroundScope.launch(testDispatcher) {

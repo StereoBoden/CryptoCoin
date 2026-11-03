@@ -26,13 +26,14 @@ import kotlinx.coroutines.launch
  * @property getCoinDetailsUseCase Use case to retrieve coin details and price.
  * @property portFolioRepository Repository to observe cash balance.
  * @property buyCoinUseCase Use case to perform the coin purchase.
+ * @property coinId The ID of the coin to be purchased.
  */
 class BuyViewModel(
     private val getCoinDetailsUseCase: GetCoinDetailsUseCase,
     private val portFolioRepository: PortfolioRepository,
     private val buyCoinUseCase: BuyCoinUseCase,
+    private val coinId: String,
 ): ViewModel() {
-    private val coinId = "1" // TODO: Remove when navigation implemented
     private val _amount = MutableStateFlow("")
     private val _state = MutableStateFlow(TradeState())
 
