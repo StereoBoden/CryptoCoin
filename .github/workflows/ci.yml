@@ -9,6 +9,9 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
 
     steps:
       - name: Checkout repository
@@ -25,10 +28,19 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run all unit tests and generate Kover coverage report
-        run: ./gradlew testDebugUnitTest koverHtmlReport
+        run: ./gradlew testDebugUnitTest koverHtmlReport koverXmlReport
+
+      - name: Parse Kover Coverage Report
+        run: python3 scripts/kover_report.py
+
+      - name: Comment Coverage on PR
+        if: github.event_name == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/post_comment.py "## 📊 Kover Code Coverage Report" kover_comment.md
 
       - name: Upload Kover Coverage Report
         uses: actions/upload-artifact@v4
         with:
           name: kover-coverage-report
-          path: composeApp/build/reports/kover/html/
+          path: composeApp/build/reports/kover/

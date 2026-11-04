@@ -37,8 +37,9 @@ This project utilizes **GitHub Actions** for continuous integration. The CI work
   1. Checks out the repository.
   2. Sets up JDK 17 (Temurin) with Gradle caching.
   3. Grants execution permissions to `gradlew`.
-  4. Runs all unit tests and generates code coverage reports (`./gradlew testDebugUnitTest koverHtmlReport`).
-  5. Uploads the Kover HTML coverage report as a workflow artifact.
+  4. Runs all unit tests and generates code coverage reports (`./gradlew testDebugUnitTest koverHtmlReport koverXmlReport`).
+  5. Parses the XML coverage report and posts/updates a summary comment on the Pull Request.
+  6. Uploads the Kover coverage reports as workflow artifacts.
 
 To run unit tests and generate coverage reports locally:
 ```bash
