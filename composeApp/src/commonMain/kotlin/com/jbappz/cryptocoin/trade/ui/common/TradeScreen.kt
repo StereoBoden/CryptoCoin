@@ -37,8 +37,7 @@ import org.jetbrains.compose.resources.stringResource
 fun TradeScreen(
     state: TradeState,
     tradeType: TradeType,
-    onAmountChange: (String) -> Unit,
-    onSubmitClicked: () -> Unit,
+    onAction: (TradeAction) -> Unit,
 ) {
     Box(
         contentAlignment = Alignment.Center,
@@ -85,7 +84,7 @@ fun TradeScreen(
             )
             CenteredDollarTextField(
                 amountText = state.amount,
-                onAmountChange = onAmountChange
+                onAmountChange = { onAction(TradeAction.OnAmountChanged(it)) }
             )
             Text(
                 text = state.availableAmount,
@@ -103,7 +102,7 @@ fun TradeScreen(
             }
         }
         Button(
-            onClick = onSubmitClicked,
+            onClick = { onAction(TradeAction.OnSubmitClicked) },
             colors = ButtonDefaults.buttonColors(
                 containerColor = when (tradeType) {
                     TradeType.BUY -> LocalExtendedColors.current.profitGreen
@@ -147,8 +146,7 @@ fun TradeScreenBuyPreview() {
                 amount = "250.00"
             ),
             tradeType = TradeType.BUY,
-            onAmountChange = {},
-            onSubmitClicked = {}
+            onAction = {},
         )
     }
 }
@@ -164,8 +162,7 @@ fun TradeScreenSellPreview() {
                 amount = "0.5"
             ),
             tradeType = TradeType.SELL,
-            onAmountChange = {},
-            onSubmitClicked = {}
+            onAction = {},
         )
     }
 }
@@ -182,8 +179,7 @@ fun TradeScreenErrorPreview() {
                 error = Res.string.error_insufficient_balance
             ),
             tradeType = TradeType.BUY,
-            onAmountChange = {},
-            onSubmitClicked = {}
+            onAction = {},
         )
     }
 }
