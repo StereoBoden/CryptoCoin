@@ -1,38 +1,68 @@
 package com.jbappz.cryptocoin
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
+import com.jbappz.cryptocoin.coins.ui.CoinsListScreen
+import com.jbappz.cryptocoin.navigation.Route
 import com.jbappz.cryptocoin.portfolio.ui.PortfolioScreen
 import com.jbappz.cryptocoin.theme.CryptoCoinTheme
+import com.jbappz.cryptocoin.trade.ui.buy.BuyScreen
+import com.jbappz.cryptocoin.trade.ui.sell.SellScreen
 
 @Composable
 fun App() {
     CryptoCoinTheme {
-        PortfolioScreen(
-            onCoinItemClicked = {
-                // TODO: Handle navigation to coin details when implementing detail screen
-            },
-            onDiscoverCoinsClicked = {
-                // TODO: Handle navigation to discover coins screen
-            }
-        )
+        val navController = rememberNavController()
 
-//        CoinsListScreen(
-//            onCoinClicked = {
-//                // TODO: Handle navigation to coin details when implementing detail screen
-//            }
-//        )
-//
-//        BuyScreen(
-//            coinId = "1",
-//            navigateToPortfolio = {
-//                // TODO: Handle navigation back to portfolio
-//            }
-//        )
-//        SellScreen(
-//            coinId = "1",
-//            navigateToPortfolio = {
-//                // TODO: Handle navigation back to portfolio
-//            }
-//        )
+        NavHost(
+            navController = navController,
+            startDestination = Route.Portfolio
+        ) {
+            composable<Route.Portfolio> {
+                PortfolioScreen(
+                    onCoinItemClicked = { coinId ->
+                        navController.navigate(Route.Sell(coinId))
+                    },
+                    onDiscoverCoinsClicked = {
+                        navController.navigate(Route.CoinsList)
+                    }
+                )
+            }
+
+            composable<Route.CoinsList> {
+                CoinsListScreen(
+                    onCoinClicked = { coinId ->
+                        navController.navigate(Route.Buy(coinId))
+                    }
+                )
+            }
+
+            composable<Route.Buy> { backStackEntry ->
+                val coinId = backStackEntry.toRoute<Route.Buy>().coinId
+                BuyScreen(
+                    coinId = coinId,
+                    navigateToPortfolio = {
+                        navController.navigate(Route.Portfolio) {
+                            popUpTo<Route.Portfolio> { inclusive = true }
+                        }
+                    }
+                )
+            }
+
+            composable<Route.Sell> { backStackEntry ->
+                val coinId = backStackEntry.toRoute<Route.Sell>().coinId
+                SellScreen(
+                    coinId = coinId,
+                    navigateToPortfolio = {
+                        navController.navigate(Route.Portfolio) {
+                            popUpTo<Route.Portfolio> { inclusive = true }
+                        }
+                    }
+                )
+            }
+        }
     }
 }

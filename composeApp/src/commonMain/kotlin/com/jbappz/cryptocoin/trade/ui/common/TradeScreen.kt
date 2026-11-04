@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -37,13 +38,13 @@ import org.jetbrains.compose.resources.stringResource
 fun TradeScreen(
     state: TradeState,
     tradeType: TradeType,
-    onAmountChange: (String) -> Unit,
-    onSubmitClicked: () -> Unit,
+    onAction: (TradeAction) -> Unit,
 ) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxSize()
+            .imePadding()
             .background(MaterialTheme.colorScheme.background)
     ) {
         Column(
@@ -85,7 +86,7 @@ fun TradeScreen(
             )
             CenteredDollarTextField(
                 amountText = state.amount,
-                onAmountChange = onAmountChange
+                onAmountChange = { onAction(TradeAction.OnAmountChanged(it)) }
             )
             Text(
                 text = state.availableAmount,
@@ -103,7 +104,7 @@ fun TradeScreen(
             }
         }
         Button(
-            onClick = onSubmitClicked,
+            onClick = { onAction(TradeAction.OnSubmitClicked) },
             colors = ButtonDefaults.buttonColors(
                 containerColor = when (tradeType) {
                     TradeType.BUY -> LocalExtendedColors.current.profitGreen
@@ -147,8 +148,7 @@ fun TradeScreenBuyPreview() {
                 amount = "250.00"
             ),
             tradeType = TradeType.BUY,
-            onAmountChange = {},
-            onSubmitClicked = {}
+            onAction = {},
         )
     }
 }
@@ -164,8 +164,7 @@ fun TradeScreenSellPreview() {
                 amount = "0.5"
             ),
             tradeType = TradeType.SELL,
-            onAmountChange = {},
-            onSubmitClicked = {}
+            onAction = {},
         )
     }
 }
@@ -182,8 +181,7 @@ fun TradeScreenErrorPreview() {
                 error = Res.string.error_insufficient_balance
             ),
             tradeType = TradeType.BUY,
-            onAmountChange = {},
-            onSubmitClicked = {}
+            onAction = {},
         )
     }
 }
