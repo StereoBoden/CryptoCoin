@@ -1,6 +1,5 @@
 package com.jbappz.cryptocoin.trade.ui.common
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,10 +7,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -40,91 +41,96 @@ fun TradeScreen(
     tradeType: TradeType,
     onAction: (TradeAction) -> Unit,
 ) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .imePadding()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = WindowInsets.safeDrawing,
+    ) { innerPadding ->
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
         ) {
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        shape = RoundedCornerShape(32.dp)
-                    )
-                    .padding(horizontal = 16.dp, vertical = 4.dp)
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                AsyncImage(
-                    model = state.coin?.iconUrl,
-                    contentDescription = null,
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier.padding(4.dp).clip(CircleShape).size(24.dp)
-                )
-                Spacer(modifier = Modifier.width(16.dp))
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            shape = RoundedCornerShape(32.dp)
+                        )
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                ) {
+                    AsyncImage(
+                        model = state.coin?.iconUrl,
+                        contentDescription = null,
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier.padding(4.dp).clip(CircleShape).size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(
+                        text = state.coin?.name ?: "",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.padding(4.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(24.dp))
                 Text(
-                    text = state.coin?.name ?: "",
-                    style = MaterialTheme.typography.labelMedium,
+                    text = when (tradeType) {
+                        TradeType.BUY -> "Buy Amount"
+                        TradeType.SELL -> "Sell Amount"
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+                CenteredDollarTextField(
+                    amountText = state.amount,
+                    onAmountChange = { onAction(TradeAction.OnAmountChanged(it)) }
+                )
+                Text(
+                    text = state.availableAmount,
+                    style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(4.dp)
                 )
+                if (state.error != null) {
+                    Text(
+                        text = stringResource(state.error),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = LocalExtendedColors.current.lossRed,
+                        modifier = Modifier.padding(4.dp)
+                    )
+                }
             }
-            Spacer(modifier = Modifier.height(24.dp))
-            Text(
-                text = when (tradeType) {
-                    TradeType.BUY -> "Buy Amount"
-                    TradeType.SELL -> "Sell Amount"
-                },
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-            CenteredDollarTextField(
-                amountText = state.amount,
-                onAmountChange = { onAction(TradeAction.OnAmountChanged(it)) }
-            )
-            Text(
-                text = state.availableAmount,
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.padding(4.dp)
-            )
-            if (state.error != null) {
+            Button(
+                onClick = { onAction(TradeAction.OnSubmitClicked) },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = when (tradeType) {
+                        TradeType.BUY -> LocalExtendedColors.current.profitGreen
+                        TradeType.SELL -> LocalExtendedColors.current.lossRed
+                    }
+                ),
+                contentPadding = PaddingValues(horizontal = 64.dp),
+                modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 32.dp)
+            ) {
                 Text(
-                    text = stringResource(state.error),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = LocalExtendedColors.current.lossRed,
-                    modifier = Modifier.padding(4.dp)
+                    text = when (tradeType) {
+                        TradeType.BUY -> "Buy Now"
+                        TradeType.SELL -> "Sell Now"
+                    },
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = when (tradeType) {
+                        TradeType.BUY -> MaterialTheme.colorScheme.onPrimary
+                        TradeType.SELL -> MaterialTheme.colorScheme.onBackground
+                    }
                 )
             }
-        }
-        Button(
-            onClick = { onAction(TradeAction.OnSubmitClicked) },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = when (tradeType) {
-                    TradeType.BUY -> LocalExtendedColors.current.profitGreen
-                    TradeType.SELL -> LocalExtendedColors.current.lossRed
-                }
-            ),
-            contentPadding = PaddingValues(horizontal = 64.dp),
-            modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 32.dp)
-        ) {
-            Text(
-                text = when (tradeType) {
-                    TradeType.BUY -> "Buy Now"
-                    TradeType.SELL -> "Sell Now"
-                },
-                style = MaterialTheme.typography.bodyLarge,
-                color = when (tradeType) {
-                    TradeType.BUY -> MaterialTheme.colorScheme.onPrimary
-                    TradeType.SELL -> MaterialTheme.colorScheme.onBackground
-                }
-            )
         }
     }
 }
