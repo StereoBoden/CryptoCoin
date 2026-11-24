@@ -14,8 +14,11 @@ import com.jbappz.cryptocoin.coins.domain.model.Coin
 import com.jbappz.cryptocoin.portfolio.domain.PortfolioCoinModel
 import com.jbappz.cryptocoin.portfolio.domain.PortfolioRepository
 import com.jbappz.cryptocoin.trade.domain.SellCoinUseCase
+import com.jbappz.cryptocoin.trade.ui.TradeEvent
+import com.jbappz.cryptocoin.trade.ui.common.TradeAction
 import com.jbappz.cryptocoin.util.formatCoinPrice
 import cryptocoin.composeapp.generated.resources.Res
+import cryptocoin.composeapp.generated.resources.error_insufficient_balance
 import cryptocoin.composeapp.generated.resources.error_no_internet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -24,6 +27,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -80,7 +84,7 @@ class SellViewModelTest {
         val getCoinDetailsUseCase = GetCoinDetailsUseCase(fakeDataSource)
         val sellCoinUseCase = SellCoinUseCase(fakeRepository)
 
-        val viewModel = SellViewModel(getCoinDetailsUseCase, fakeRepository, sellCoinUseCase)
+        val viewModel = SellViewModel(getCoinDetailsUseCase, fakeRepository, sellCoinUseCase, "1")
         val state = viewModel.state.first { !it.isLoading }
 
         assertFalse(state.isLoading)
@@ -114,7 +118,7 @@ class SellViewModelTest {
         val getCoinDetailsUseCase = GetCoinDetailsUseCase(fakeDataSource)
         val sellCoinUseCase = SellCoinUseCase(fakeRepository)
 
-        val viewModel = SellViewModel(getCoinDetailsUseCase, fakeRepository, sellCoinUseCase)
+        val viewModel = SellViewModel(getCoinDetailsUseCase, fakeRepository, sellCoinUseCase, "1")
         val state = viewModel.state.first { !it.isLoading }
 
         assertFalse(state.isLoading)
@@ -151,16 +155,110 @@ class SellViewModelTest {
         val getCoinDetailsUseCase = GetCoinDetailsUseCase(fakeDataSource)
         val sellCoinUseCase = SellCoinUseCase(fakeRepository)
 
-        val viewModel = SellViewModel(getCoinDetailsUseCase, fakeRepository, sellCoinUseCase)
+        val viewModel = SellViewModel(getCoinDetailsUseCase, fakeRepository, sellCoinUseCase, "1")
         viewModel.state.first { !it.isLoading }
 
         val collectJob = backgroundScope.launch(testDispatcher) {
             viewModel.state.collect {}
         }
 
-        viewModel.onAmountChanged("250")
+        viewModel.onAction(TradeAction.OnAmountChanged("250"))
         val state = viewModel.state.first { it.amount == "250" }
         assertEquals("250", state.amount)
+        collectJob.cancel()
+    }
+
+    @Test
+    fun testOnActionSellSuccessEmitsNavigateEvent() = runTest {
+        val portfolioCoin = PortfolioCoinModel(
+            coin = Coin(id = "1", name = "Bitcoin", symbol = "BTC", iconUrl = "url"),
+            performancePercent = 0.0,
+            averagePurchasePrice = 50000.0,
+            ownedAmountInUnit = 0.5,
+            ownedAmountInFiat = 25000.0
+        )
+        val fakeDataSource = FakeCoinsRemoteDataSource(
+            coinDetailsResult = Result.Success(
+                CoinDetailsResponseDto(
+                    data = CoinResponseDto(
+                        coin = CoinItemDto(
+                            uuid = "1",
+                            symbol = "BTC",
+                            name = "Bitcoin",
+                            iconUrl = "url",
+                            price = 60000.0,
+                            rank = 1,
+                            change = 0.0
+                        )
+                    )
+                )
+            )
+        )
+        val fakeRepository = FakePortfolioRepository(portfolioCoin)
+        val getCoinDetailsUseCase = GetCoinDetailsUseCase(fakeDataSource)
+        val sellCoinUseCase = SellCoinUseCase(fakeRepository)
+
+        val viewModel = SellViewModel(getCoinDetailsUseCase, fakeRepository, sellCoinUseCase, "1")
+        viewModel.state.first { !it.isLoading }
+
+        val eventsList = mutableListOf<TradeEvent>()
+        val eventsJob = backgroundScope.launch(testDispatcher) {
+            viewModel.events.collect { eventsList.add(it) }
+        }
+
+        viewModel.onAction(TradeAction.OnAmountChanged("250"))
+        viewModel.onAction(TradeAction.OnSubmitClicked)
+        advanceUntilIdle()
+
+        assertEquals(TradeEvent.NavigateToPortfolio, eventsList.firstOrNull())
+        eventsJob.cancel()
+    }
+
+    @Test
+    fun testOnActionSellError() = runTest {
+        val fakeDataSource = FakeCoinsRemoteDataSource(
+            coinDetailsResult = Result.Success(
+                CoinDetailsResponseDto(
+                    data = CoinResponseDto(
+                        coin = CoinItemDto(
+                            uuid = "1",
+                            symbol = "BTC",
+                            name = "Bitcoin",
+                            iconUrl = "url",
+                            price = 1.0,
+                            rank = 1,
+                            change = 0.0
+                        )
+                    )
+                )
+            )
+        )
+        // Portfolio coin with 10.0 fiat value vs 500.0 sell amount
+        val portfolioCoin = PortfolioCoinModel(
+            coin = Coin(id = "1", name = "Bitcoin", symbol = "BTC", iconUrl = "url"),
+            performancePercent = 0.0,
+            averagePurchasePrice = 1.0,
+            ownedAmountInUnit = 10.0,
+            ownedAmountInFiat = 10.0
+        )
+        val fakeRepository = FakePortfolioRepository(portfolioCoin)
+        val getCoinDetailsUseCase = GetCoinDetailsUseCase(fakeDataSource)
+        val sellCoinUseCase = SellCoinUseCase(fakeRepository)
+
+        val viewModel = SellViewModel(getCoinDetailsUseCase, fakeRepository, sellCoinUseCase, "1")
+        viewModel.state.first { !it.isLoading }
+
+        val collectJob = backgroundScope.launch(testDispatcher) {
+            viewModel.state.collect {}
+        }
+
+        viewModel.onAction(TradeAction.OnAmountChanged("500"))
+        viewModel.onAction(TradeAction.OnSubmitClicked)
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertNotNull(state.error)
+        assertEquals(Res.string.error_insufficient_balance, state.error)
         collectJob.cancel()
     }
 

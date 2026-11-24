@@ -13,8 +13,11 @@ import com.jbappz.cryptocoin.coins.domain.usecase.GetCoinDetailsUseCase
 import com.jbappz.cryptocoin.portfolio.domain.PortfolioCoinModel
 import com.jbappz.cryptocoin.portfolio.domain.PortfolioRepository
 import com.jbappz.cryptocoin.trade.domain.BuyCoinUseCase
+import com.jbappz.cryptocoin.trade.ui.TradeEvent
+import com.jbappz.cryptocoin.trade.ui.common.TradeAction
 import com.jbappz.cryptocoin.util.formatCoinPrice
 import cryptocoin.composeapp.generated.resources.Res
+import cryptocoin.composeapp.generated.resources.error_insufficient_balance
 import cryptocoin.composeapp.generated.resources.error_no_internet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,6 +26,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -72,7 +76,7 @@ class BuyViewModelTest {
         val getCoinDetailsUseCase = GetCoinDetailsUseCase(fakeDataSource)
         val buyCoinUseCase = BuyCoinUseCase(fakeRepository)
 
-        val viewModel = BuyViewModel(getCoinDetailsUseCase, fakeRepository, buyCoinUseCase)
+        val viewModel = BuyViewModel(getCoinDetailsUseCase, fakeRepository, buyCoinUseCase, "1")
         val state = viewModel.state.first { !it.isLoading }
 
         assertFalse(state.isLoading)
@@ -91,7 +95,7 @@ class BuyViewModelTest {
         val getCoinDetailsUseCase = GetCoinDetailsUseCase(fakeDataSource)
         val buyCoinUseCase = BuyCoinUseCase(fakeRepository)
 
-        val viewModel = BuyViewModel(getCoinDetailsUseCase, fakeRepository, buyCoinUseCase)
+        val viewModel = BuyViewModel(getCoinDetailsUseCase, fakeRepository, buyCoinUseCase, "1")
         val state = viewModel.state.first { !it.isLoading }
 
         assertFalse(state.isLoading)
@@ -121,16 +125,96 @@ class BuyViewModelTest {
         val getCoinDetailsUseCase = GetCoinDetailsUseCase(fakeDataSource)
         val buyCoinUseCase = BuyCoinUseCase(fakeRepository)
 
-        val viewModel = BuyViewModel(getCoinDetailsUseCase, fakeRepository, buyCoinUseCase)
+        val viewModel = BuyViewModel(getCoinDetailsUseCase, fakeRepository, buyCoinUseCase, "1")
         viewModel.state.first { !it.isLoading }
 
         val collectJob = backgroundScope.launch(testDispatcher) {
             viewModel.state.collect {}
         }
 
-        viewModel.onAmountChanged("500")
+        viewModel.onAction(TradeAction.OnAmountChanged("500"))
         val state = viewModel.state.first { it.amount == "500" }
         assertEquals("500", state.amount)
+        collectJob.cancel()
+    }
+
+    @Test
+    fun testOnActionBuySuccessEmitsNavigateEvent() = runTest {
+        val fakeDataSource = FakeCoinsRemoteDataSource(
+            coinDetailsResult = Result.Success(
+                CoinDetailsResponseDto(
+                    data = CoinResponseDto(
+                        coin = CoinItemDto(
+                            uuid = "1",
+                            symbol = "BTC",
+                            name = "Bitcoin",
+                            iconUrl = "url",
+                            price = 50000.0,
+                            rank = 1,
+                            change = 0.0
+                        )
+                    )
+                )
+            )
+        )
+        val fakeRepository = FakePortfolioRepository(initialCashBalance = 10000.0)
+        val getCoinDetailsUseCase = GetCoinDetailsUseCase(fakeDataSource)
+        val buyCoinUseCase = BuyCoinUseCase(fakeRepository)
+
+        val viewModel = BuyViewModel(getCoinDetailsUseCase, fakeRepository, buyCoinUseCase, "1")
+        viewModel.state.first { !it.isLoading }
+
+        val eventsList = mutableListOf<TradeEvent>()
+        val eventsJob = backgroundScope.launch(testDispatcher) {
+            viewModel.events.collect { eventsList.add(it) }
+        }
+
+        viewModel.onAction(TradeAction.OnAmountChanged("500"))
+        viewModel.onAction(TradeAction.OnSubmitClicked)
+        advanceUntilIdle()
+
+        assertEquals(TradeEvent.NavigateToPortfolio, eventsList.firstOrNull())
+        eventsJob.cancel()
+    }
+
+    @Test
+    fun testOnActionBuyError() = runTest {
+        val fakeDataSource = FakeCoinsRemoteDataSource(
+            coinDetailsResult = Result.Success(
+                CoinDetailsResponseDto(
+                    data = CoinResponseDto(
+                        coin = CoinItemDto(
+                            uuid = "1",
+                            symbol = "BTC",
+                            name = "Bitcoin",
+                            iconUrl = "url",
+                            price = 50000.0,
+                            rank = 1,
+                            change = 0.0
+                        )
+                    )
+                )
+            )
+        )
+        // Cash balance of 10.0 is less than purchase amount 500.0
+        val fakeRepository = FakePortfolioRepository(initialCashBalance = 10.0)
+        val getCoinDetailsUseCase = GetCoinDetailsUseCase(fakeDataSource)
+        val buyCoinUseCase = BuyCoinUseCase(fakeRepository)
+
+        val viewModel = BuyViewModel(getCoinDetailsUseCase, fakeRepository, buyCoinUseCase, "1")
+        viewModel.state.first { !it.isLoading }
+
+        val collectJob = backgroundScope.launch(testDispatcher) {
+            viewModel.state.collect {}
+        }
+
+        viewModel.onAction(TradeAction.OnAmountChanged("500"))
+        viewModel.onAction(TradeAction.OnSubmitClicked)
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertNotNull(state.error)
+        assertEquals(Res.string.error_insufficient_balance, state.error)
         collectJob.cancel()
     }
 
@@ -162,7 +246,7 @@ class BuyViewModelTest {
         }
 
         override suspend fun getPortfolioCoin(coinId: String): Result<PortfolioCoinModel?, DataError.Remote> {
-            TODO("Not needed")
+            return Result.Success(null)
         }
 
         override suspend fun savePortfolioCoin(portfolioCoinModel: PortfolioCoinModel): EmptyResult<DataError.Local> {

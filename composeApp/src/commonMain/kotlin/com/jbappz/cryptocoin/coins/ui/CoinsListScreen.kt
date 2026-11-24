@@ -7,10 +7,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -69,28 +72,31 @@ fun CoinsListContent(
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
-        if (state.isLoading) {
-            LoadingContent(innerPadding)
-        } else if (state.error != null) {
-           ErrorContent(innerPadding, state.error)
-        } else {
-            CoinsContent(
-                state = state,
-                innerPadding = innerPadding,
-                onCoinClicked = onCoinClicked,
-                onCoinLongPressed = onCoinLongPressed,
-                onDismissChart = onDismissChart,
-            )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            if (state.isLoading) {
+                LoadingContent()
+            } else if (state.error != null) {
+                ErrorContent(state.error)
+            } else {
+                CoinsContent(
+                    state = state,
+                    onCoinClicked = onCoinClicked,
+                    onCoinLongPressed = onCoinLongPressed,
+                    onDismissChart = onDismissChart,
+                )
+            }
         }
     }
 }
 
 @Composable
-fun LoadingContent(innerPadding: PaddingValues) {
+fun LoadingContent() {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator()
@@ -98,11 +104,10 @@ fun LoadingContent(innerPadding: PaddingValues) {
 }
 
 @Composable
-fun ErrorContent(innerPadding: PaddingValues, errorStringRes: StringResource) {
+fun ErrorContent(errorStringRes: StringResource) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(innerPadding)
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -118,7 +123,6 @@ fun ErrorContent(innerPadding: PaddingValues, errorStringRes: StringResource) {
 @Composable
 fun CoinsContent(
     state: CoinsState,
-    innerPadding: PaddingValues = PaddingValues(0.dp),
     onCoinClicked: (String) -> Unit,
     onCoinLongPressed: (String) -> Unit,
     onDismissChart: () -> Unit,
@@ -131,7 +135,6 @@ fun CoinsContent(
     }
     CoinsList(
         coins = state.coins,
-        innerPadding = innerPadding,
         onCoinClicked = onCoinClicked,
         onCoinLongPressed = onCoinLongPressed,
     )
@@ -140,12 +143,10 @@ fun CoinsContent(
 @Composable
 fun CoinsList(
     coins: List<UiCoinListItem>,
-    innerPadding: PaddingValues = PaddingValues(0.dp),
     onCoinClicked: (String) -> Unit,
     onCoinLongPressed: (String) -> Unit,
 ) {
     LazyColumn(
-        contentPadding = innerPadding,
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.fillMaxSize(),
     ) {

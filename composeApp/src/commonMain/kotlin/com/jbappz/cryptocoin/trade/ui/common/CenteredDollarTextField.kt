@@ -1,15 +1,12 @@
 package com.jbappz.cryptocoin.trade.ui.common
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -48,13 +45,14 @@ fun CenteredDollarTextField(
         focusRequester.requestFocus()
     }
 
+    val visualTransformation = remember { DollarPrefixVisualTransformation() }
     val displayText = amountText.trimStart('$')
 
     BasicTextField(
         value = displayText,
         onValueChange = { newValue ->
             val trimmed = newValue.trimStart('0').trim { it.isDigit().not() }
-            if (trimmed.isEmpty() || trimmed.toInt() <= 10000) {
+            if (trimmed.isEmpty() || (trimmed.toIntOrNull() ?: 0) <= 10000) {
                 onAmountChange(trimmed)
             }
         },
@@ -69,20 +67,12 @@ fun CenteredDollarTextField(
         keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = KeyboardType.Number
         ),
+        visualTransformation = visualTransformation,
         decorationBox = { innerTextField ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.height(56.dp).wrapContentWidth()
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.height(56.dp)
             ) {
-                Text(
-                    text = "$",
-                    style = TextStyle(
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 24.sp,
-                        textAlign = TextAlign.Center
-                    )
-                )
                 innerTextField()
             }
         },
